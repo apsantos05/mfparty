@@ -445,10 +445,7 @@
   });
   window.addEventListener("online",()=>{if(state.activePayment)queuePoll(3);});
   window.addEventListener("offline",()=>{clearTimeout(state.pollTimer);statusHint.textContent="Sem conexão. O PIX continua válido; a consulta voltará ao reconectar.";});
-
-  document.querySelectorAll("[data-whatsapp]").forEach(link => {
-    link.href = config.whatsappGroupUrl || "#";
-  });
+
 
   updateSummary();
   try { const draft=JSON.parse(sessionStorage.getItem("hp10_payment_draft")||"null"); if(draft?.requestId&&draft?.fingerprint){state.requestId=draft.requestId;state.requestFingerprint=draft.fingerprint;} } catch {}

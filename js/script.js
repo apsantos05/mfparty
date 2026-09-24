@@ -1,7 +1,6 @@
 (() => {
   "use strict";
 
-  const config = window.HALLOWEEN_CONFIG || {};
   const eventDay = new Date("2026-10-31T00:00:00-03:00").getTime();
 
   function updateCountdown() {
@@ -26,9 +25,6 @@
     }
   }
 
-  document.querySelectorAll("[data-whatsapp]").forEach(link => {
-    link.href = config.whatsappGroupUrl || "#";
-  });
 
   const details = [...document.querySelectorAll(".questions details")];
   details.forEach(detail => {
@@ -41,10 +37,10 @@
   });
 
 
-  // Mostrar CTA compacto somente após o hero, sem cobrir os dois botões iniciais.
+  // Mostrar CTA compacto somente após o hero, sem cobrir o botão inicial.
   const quickActions = document.getElementById("mobileActions");
   const hero = document.getElementById("inicio");
-  const join = document.getElementById("grupo");
+  const join = document.getElementById("ingressos");
   if (quickActions && hero) {
     const updateActions = () => {
       const heroBottom = hero.getBoundingClientRect().bottom;

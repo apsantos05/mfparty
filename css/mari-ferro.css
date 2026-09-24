@@ -42,3 +42,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
  h2{font-size:40px}.bar h2{font-size:64px}.join h2{font-size:48px}.genres h3{font-size:31px}
  .brand{font-size:22px;max-width:220px}.brand>span{font-size:9px}
 }
+
+/* Barra móvel com acesso único aos ingressos. */
+.mobile-cta-bar{grid-template-columns:minmax(0,1fr)}
