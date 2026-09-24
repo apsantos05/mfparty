@@ -3,6 +3,7 @@ const crypto=require('node:crypto');
 const QRCode=require('qrcode');
 const {BASE,FEE,TICKETS,amount,send,sign,normalizeCoupon}=require('../lib/payment-shared');
 const redis=require('../lib/redis');
+const {expiry}=require('../lib/tickets');
 function digits(v){return String(v||'').replace(/\D/g,'');}
 function text(v,max=120){return String(v||'').trim().slice(0,max);}
 function cpfValid(cpf){if(!/^\d{11}$/.test(cpf)||/^(\d)\1{10}$/.test(cpf))return false;let sum=0;for(let i=0;i<9;i++)sum+=Number(cpf[i])*(10-i);let d=(sum*10)%11;if(d===10)d=0;if(d!==Number(cpf[9]))return false;sum=0;for(let i=0;i<10;i++)sum+=Number(cpf[i])*(11-i);d=(sum*10)%11;if(d===10)d=0;return d===Number(cpf[10]);}
@@ -63,7 +64,7 @@ module.exports=async function handler(req,res){
    console.error('[create-pix] rejected provider response', {reason:rejectReason});
    return send(res,502,{error:'Não foi possível validar a cobrança PIX. Não efetue pagamento.'});
   }
-  const token=sign({v:1,id:txId,ref,ticket,quantity,...(coupon?{coupon}:{}),amount:expected,name,expires:Date.now()+7*86400000});
+  const token=sign({v:1,id:txId,ref,ticket,quantity,...(coupon?{coupon}:{}),amount:expected,name,expires:Math.max(Date.now()+7*86400000,Number.isFinite(expiry())?expiry():0)});
   let qr=null;try{qr=await QRCode.toDataURL(pix,{width:440,margin:1,errorCorrectionLevel:'M'});}catch{/* O código copia e cola continua disponível. */}
   return send(res,200,{token,coupon,discount_cents:discount,amount_cents:expected,subtotal_cents:TICKETS[ticket].cents*quantity,service_fee_cents:FEE*quantity*TICKETS[ticket].admissions,copy_paste:pix,expires_at:data.pix.expires_at||null,qr_data_url:qr});
  }catch{return send(res,502,{error:'Não foi possível conectar ao pagamento. Repita a tentativa sem alterar os dados.'});}

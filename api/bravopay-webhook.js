@@ -1,6 +1,7 @@
 'use strict';
 const crypto=require('node:crypto');
 const redis=require('../lib/redis');
+const tickets=require('../lib/tickets');
 function send(res,status,body){res.setHeader('Cache-Control','no-store');return res.status(status).json(body);}
 function signatureOk(raw,header,secret){
  if(typeof header!=='string')return false;
@@ -33,6 +34,11 @@ module.exports=async function handler(req,res){
     return send(res,200,{received:true});
    }
    try{
+    // Reembolso autenticado bloqueia novas entradas, inclusive se chegar fora de ordem.
+    if(status==='REFUNDED'||status==='CHARGEBACK') {
+     const until=Math.max(Date.now()+30*86400000,Number.isFinite(tickets.expiry())?tickets.expiry()+30*86400000:0);
+     await redis.command(['SET',tickets.key('blocked',tx.id),JSON.stringify({status}),'EXAT',Math.floor(until/1000)]);
+    }
     const key=`hp10:event-state:${tx.id}`;
     const previous=await redis.get(key);
     const priority={'transaction.refunded':5,'transaction.chargeback':5,'transaction.paid':4,'transaction.expired':3,'transaction.failed':3};

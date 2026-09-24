@@ -22,16 +22,16 @@ Segredos apenas na Vercel. Após configurar, faça **novo deploy**. Este ZIP nã
 - `bravopay-webhook`: só aceita evento HMAC válido usando bytes brutos; janela de 5 minutos; estados de pagamento/reembolso/chargeback gravados no Redis quando configurado. Se indisponível, responde 503 para o provedor tentar reenviar. Sem Redis, funciona como endpoint informativo, sem fornecer sinal compartilhado de aprovação.
 - Proteções de volume com Redis: limites por minuto de até 30 criações + 25 consultas ao provedor, deixando margem sobre a documentação da BravoPay (60 req/min por chave). São limites de **requisições**, não de 30/25 vendas aprovadas. Webhooks e cache evitam consultas diretas em massa. Atingir a cota apresenta mensagem de aguardar; **não há fila de vendas**.
 - Checkout: 30s + jitter entre consultas *ao backend* quando há Redis, 180s sem Redis; pausa com aba oculta/offline; respeita resposta 429/Retry-After; consulta manual com intervalo mínimo; reuso da tentativa após timeout. Não gera PIX silenciosamente ao voltar.
-- Obrigado: valida PAID no servidor, tenta novamente quando a consulta falha, e só libera botão do WhatsApp comercial `5512988859882` com mensagem pronta depois de PAID. Entrega de ingresso é manual.
+- Obrigado: após PAID, emite um QR Code por entrada com download PNG e impressão/PDF. Validação autenticada em `/portaria`, com uso único no Redis. Configuração e operação em [PORTARIA.md](PORTARIA.md).
 
 ## Limitações, sem promessas de homologação
 
-1. **Não houve PIX real pago neste ambiente.** Publicar, criar cobrança autorizada, pagar, verificar `PAID`, tela de obrigado e WhatsApp. Testar também webhook real no painel do provedor e comportamento de retries.
+1. **Não houve PIX real pago neste ambiente.** Publicar, criar cobrança autorizada, pagar, verificar `PAID`, tela de obrigado e ingresso QR. Testar também webhook real no painel do provedor e comportamento de retries.
 2. Sem Redis, não anunciar o site como homologado para centenas de compradores simultâneos: não há limite compartilhado entre funções serverless nem status compartilhado por webhook; o checkout consulta a BravoPay com maior intervalo.
 3. Mesmo com Redis, limite oficial do provedor é 60 requisições/min por chave, possivelmente compartilhado com outros aplicativos que usam a mesma chave. Uma campanha com mais de 30 novas criações por minuto pode receber mensagens de espera; solicitar aumento de limite ao provedor ou planejar a campanha.
 4. Webhook precisa ser testado na **Vercel real**, inclusive acesso ao corpo bruto da requisição, assinaturas e sincronização do horário.
 5. A compra pode não ser recuperada em outro dispositivo/aba sem um banco de pedidos. A organização pode localizar a referência no painel da BravoPay e atender manualmente.
-6. Teste visual automatizado no Chromium local não concluiu neste ambiente; validar Safari/Chrome reais em 320–430px, QR, teclado virtual e botão WhatsApp.
+6. Teste visual automatizado no Chromium local não concluiu neste ambiente; validar Safari/Chrome reais em 320–430px, QR, teclado virtual e download do ingresso.
 
 ## Teste local
 
@@ -55,7 +55,7 @@ Ao atualizar a página durante um PIX pendente, o checkout agora restaura visual
 - Código `pix.copy_paste` e identificador da transação continuam obrigatórios; QR Code é gerado localmente a partir do copia-e-cola.
 - Erros técnicos mostram apenas um código de motivo nos logs de `/api/create-pix`, sem chave, nome, CPF, código PIX ou outros dados privados.
 - O webhook, o status `PAID` e a tela de obrigado permanecem separados da simples criação da cobrança.
-- **Ainda é necessário teste real após deploy**: PIX gerado e visível, pagamento de teste, confirmação `PAID`, obrigado e WhatsApp.
+- **Ainda é necessário teste real após deploy**: PIX gerado e visível, pagamento de teste, confirmação `PAID`, obrigado e ingresso QR.
 
 ## Combo Amigo retirado
 

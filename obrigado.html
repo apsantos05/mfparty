@@ -9,7 +9,7 @@
  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Pirata+One&display=swap" rel="stylesheet">
  <link rel="stylesheet" href="css/checkout.css"><link rel="stylesheet" href="css/obrigado.css">
  <script src="js/config.js" defer></script><script src="js/obrigado.js" defer></script>
-  <link rel="stylesheet" href="css/mari-ferro.css">
+  <link rel="stylesheet" href="css/mari-ferro.css"><link rel="stylesheet" href="css/tickets.css">
 </head>
 <body>
  <header class="checkout-header"><a class="back-link" href="index.html">← VOLTAR AO SITE</a><a class="brand" href="index.html">Halloween da Mari Ferro<span>MF PARTY</span></a></header>
@@ -25,8 +25,9 @@
      <div><span>Valor pago</span><strong id="thanksAmount"></strong></div>
      <div><span>Referência</span><strong id="thanksReference"></strong></div>
    </div>
-   <a id="receiveTicket" class="thanks-button" hidden target="_blank" rel="noopener noreferrer">RECEBER MEU INGRESSO NO WHATSAPP ↗</a>
-   <p id="manualNote" class="thanks-note" hidden>O ingresso será enviado manualmente pela organização no WhatsApp.</p>
+   <div id="ticketList" class="ticket-list" hidden></div>
+   <button id="printTickets" class="thanks-button" type="button" hidden>IMPRIMIR / SALVAR EM PDF</button>
+   <p class="thanks-note">Cada QR Code permite uma única entrada. Salve os ingressos antes de fechar esta página e apresente-os na portaria. Não publique seus códigos.</p>
    <button id="retryStatus" class="thanks-retry" type="button" hidden>VERIFICAR NOVAMENTE</button>
   </section>
  </main>
