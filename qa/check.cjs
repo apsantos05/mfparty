@@ -1,0 +1,3 @@
+const {chromium}=require('C:/Users/arthu/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+(async()=>{const b=await chromium.launch({headless:true,channel:"msedge"});const p=await b.newPage();for(const width of [390,1440]){await p.setViewportSize({width,height:950});for(const file of ['index.html','checkout.html','obrigado.html']){await p.goto('file:///D:/MFPARTY/'+file);await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:`qa/${file}-${width}.png`,fullPage:true});console.log(file,width,await p.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,title:document.title,h1:document.querySelector('h1').innerText})))} }await b.close()})();
+

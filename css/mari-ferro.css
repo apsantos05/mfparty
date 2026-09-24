@@ -1,0 +1,44 @@
+/* Halloween da Mari Ferro — gothic editorial identity */
+:root{--bg:#10090c;--bg-soft:#1b0e13;--panel:#1b0e13;--panel2:#25131a;--text:#f6eddf;--muted:#c5afb5;--orange:#e9a6b2;--orange-soft:#f3bec8;--orange2:#922c46;--line:#43232f;--line2:#653044;--line-strong:#653044}
+body{background:var(--bg);font-family:'Manrope',Arial,sans-serif}
+.brand,.header .brand{font-family:'Cormorant Garamond',Georgia,serif;font-size:26px;font-weight:600;line-height:1.1;letter-spacing:-.6px}
+.brand>span,.header .brand>span{font:700 10px/1.5 'Manrope',sans-serif;letter-spacing:4px;margin-top:8px;color:var(--orange)}
+.header{min-height:102px}
+.hero{min-height:760px}
+.hero-art{background-image:linear-gradient(90deg,#10090cf5 0%,#10090c90 45%,#10090c00 80%),linear-gradient(0deg,#10090c,transparent 45%),url('../images/mari-ferro-halloween.webp');background-position:center;background-size:cover}
+.hero:after{background:none}
+.hero-content{padding-top:68px}
+.hero h1{font:400 clamp(76px,8vw,118px)/1.05 'Pirata One',Georgia,serif;letter-spacing:0;color:var(--text);transform:none;text-shadow:0 4px 35px #0008}
+.hero h1>span{font:500 .64em/1.15 'Cormorant Garamond',Georgia,serif;letter-spacing:-1px;color:var(--orange)}
+.hero h1>small{display:block;font:700 13px/1.5 'Manrope',sans-serif;letter-spacing:8px;color:var(--text);margin-top:24px}
+.kicker{color:var(--orange);letter-spacing:3px}
+h2,h3{font-weight:600;line-height:1.03;letter-spacing:-1.5px}
+h2{font-size:clamp(38px,4.5vw,64px)}
+.dot{background:var(--orange);box-shadow:0 0 16px #e9a6b266}
+.nav-cta,.button-ghost{border-color:#985064;background:#25131a80}
+.nav-cta:hover,.button-ghost:hover{background:#43232f}
+.button{border-radius:3px}.button:hover{background:#f3bec8}
+.button:not(.button-ghost):not(.button-ghost-dark):not(.dark),.mobile-cta{color:#210e16}
+.button-ghost:hover{color:var(--text)}
+.ticker{background:#692239;color:var(--text);transform:none;border-top:1px solid #a8526944;border-bottom:1px solid #a8526944}
+.ticker>div{font:600 17px 'Manrope',sans-serif;letter-spacing:2px;gap:24px}.ticker-sep{background:var(--orange)}
+.clock strong{font-family:'Cormorant Garamond',Georgia,serif}.clock>b{color:#985064}
+.reveal-highlight{background:linear-gradient(120deg,#321520,#1b0e13);border-color:var(--line-strong)}
+.reveal-label{border-color:#985064;color:var(--orange)}
+.genre-icon{color:var(--orange)}.genres article{background:linear-gradient(140deg,#69223922,transparent);border-color:var(--line-strong)}
+.join{background:#511c2e;color:var(--text);border-block:1px solid #98506466}.join:before{font-family:'Cormorant Garamond',serif}.join h2 em{color:#e9a6b2}
+.button-ghost-dark{background:transparent;color:var(--text);border-color:#b76c81}.button-ghost-dark:hover{background:#692239}
+.button.dark{background:var(--text);color:#210e16}.button.dark:hover{background:#e9a6b2}
+.mobile-cta-bar{background:#10090cf0}.mobile-cta--ghost{color:var(--text);border-color:#985064;background:#25131a}
+.checkout-header{background:#10090cf0}.checkout-intro h1{font-size:clamp(46px,10vw,72px)}
+.thanks-card{background:var(--panel);border-color:var(--line)}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline-color:#f3bec8}
+@media(max-width:640px){
+ .header{min-height:92px}.header .brand{font-size:22px;max-width:calc(100% - 120px)}.header .brand>span{font-size:9px;letter-spacing:3px}
+ .hero{min-height:780px}.hero-content{padding-top:36px}
+ .hero-art{background-image:linear-gradient(90deg,#10090cd9,#10090c60),linear-gradient(0deg,#10090c,transparent 60%),url('../images/mari-ferro-halloween.webp');background-position:70% center}
+ .hero h1{font-size:clamp(57px,14.5vw,90px);line-height:1.08;letter-spacing:0;transform:none}.hero h1>span{font-size:.66em;letter-spacing:-.5px}.hero h1>small{font-size:11px;letter-spacing:6px;margin-top:20px}
+ .hero-copy{margin-top:25px}.hero-bottom{padding-top:30px}.kicker{font-size:9px;letter-spacing:1.8px}
+ h2{font-size:40px}.bar h2{font-size:64px}.join h2{font-size:48px}.genres h3{font-size:31px}
+ .brand{font-size:22px;max-width:220px}.brand>span{font-size:9px}
+}

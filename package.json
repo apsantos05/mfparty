@@ -1,0 +1,11 @@
+{
+  "name": "halloween-party-1-0",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  },
+  "scripts": {
+    "test": "node --test tests/payment.test.js"
+  }
+}
