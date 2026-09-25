@@ -19,7 +19,7 @@ module.exports=async function handler(req,res){
  if(name.length<3||!/^\S+@\S+\.\S+$/.test(email)||!cpfValid(cpf)||phone.length<10||phone.length>13)return send(res,422,{error:'Revise nome, e-mail, CPF e WhatsApp.'});
  const requestId=String(b.request_id||'');if(!/^[a-f0-9-]{36}$/i.test(requestId))return send(res,422,{error:'Atualize a página e tente novamente.'});
  // Referência estável por tentativa + conteúdo; retry do mesmo envio reutiliza a chave da adquirente.
- const fingerprint=JSON.stringify({requestId,ticket,quantity,name,email,cpf,phone,...(coupon?{coupon}:{})});
+ const fingerprint=JSON.stringify({requestId,ticket,quantity,amount_cents:expected,name,email,cpf,phone,...(coupon?{coupon}:{})});
  const digest=crypto.createHmac('sha256',process.env.ORDER_SIGNING_SECRET).update(fingerprint).digest('hex').slice(0,32);
  const ref=`hp10_${ticket}_${digest}`;
  const utm={};for(const key of ['source','medium','campaign','content','term','fbclid','ttclid','gclid'])utm[key]=text(b.utm?.[key],180);

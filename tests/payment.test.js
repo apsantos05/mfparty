@@ -52,7 +52,7 @@ function res(){return {statusCode:0,headers:{},setHeader(k,v){this.headers[k]=v;
 const customer={name:'Teste Comprador',email:'comprador@example.com',cpf:'52998224725',phone:'12988859882'};
 async function call(handler,body){const response=res();await handler({method:'POST',body},response);return response;}
 let created;
-test('cálculos corretos da taxa por ingresso',()=>{assert.equal(amount('mulher',1),4449);assert.equal(amount('homem',1),6449);assert.equal(amount('mulher',2),8898);assert.equal(amount('homem',2),12898);assert.equal(amount('mulher',0),null);assert.equal(amount('homem',6),null);});
+test('cálculos corretos da taxa por ingresso',()=>{assert.equal(amount('mulher',1),4449);assert.equal(amount('homem',1),549);assert.equal(amount('mulher',2),8898);assert.equal(amount('homem',2),1098);assert.equal(amount('mulher',0),null);assert.equal(amount('homem',6),null);});
 test('combo retirado rejeita novas cobranças e preserva confirmação de pedidos antigos',async()=>{
  const before=providerCalls;
  for(const quantity of [1,2]){
@@ -108,7 +108,7 @@ test('ingresso +16 cobra 25 reais mais taxa e mantém identificação sem álcoo
 test('cupons descontam 25% apenas dos ingressos e rejeitam códigos inválidos',async()=>{
  for(const code of ['DOLCE25','MARIF25','BRUNOJ25','PROMO25']){
   assert.equal(amount('mulher',1,code),3449);
-  assert.equal(amount('homem',1,code),4949);
+  assert.equal(amount('homem',1,code),524);
   assert.equal(amount('jovem',1,code),2324);
   assert.equal(amount('combo',1,code),6898);
   assert.equal(amount('jovem',5,code),11620);
@@ -178,7 +178,7 @@ test('se resposta nao informar valor, consultar gateway antes de exibir PIX',asy
  try{
   const before=providerCalls;
   const r=await call(create,{ticket:'homem',quantity:1,customer,request_id:'a1234567-1234-4234-8234-123456789014'});
-  assert.equal(r.statusCode,200);assert.equal(r.body.amount_cents,6449);assert.equal(providerCalls,before+2);
+  assert.equal(r.statusCode,200);assert.equal(r.body.amount_cents,549);assert.equal(providerCalls,before+2);
  }finally{creationResponseOverride=null;}
 });
 test('valor incorreto informado pelo gateway bloqueia PIX',async()=>{
@@ -228,3 +228,11 @@ test('limite compartilhado impede excesso de consultas externas',async()=>{
  assert.equal(over.statusCode,429);assert.ok(over.body.retry_after>0);
 });
 test('nenhuma chave ou código PIX real embutido no teste',()=>assert.equal(process.env.BRAVOPAY_API_KEY,'TEST_TOKEN_NEVER_REAL'));
+
+ test('preço masculino novo gera PIX de R$ 5,49 e preserva tokens antigos assinados',async()=>{
+ const result=await call(create,{ticket:'homem',quantity:1,customer,request_id:'f1234567-1234-4234-8234-123456789014'});
+ assert.equal(result.statusCode,200);assert.equal(result.body.amount_cents,549);assert.equal(result.body.subtotal_cents,100);
+ const old={v:1,id:'tx_oldmale',ref:'hp10_homem_'+'e'.repeat(32),ticket:'homem',quantity:1,name:'Teste',expires:Date.now()+86400000};
+ for(const [coupon,total] of [['',6449],['DOLCE25',4949],['DOLCE10',5849]])assert.ok(verify(sign({...old,coupon,amount:total})));
+ assert.equal(verify(sign({...old,amount:1234})),null);
+ });

@@ -5,7 +5,7 @@
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
-  const ticketOptions = {mulher:{label:'Mulher',price:40,admissions:1},homem:{label:'Homem',price:60,admissions:1},jovem:{label:'+16 anos · Open bar sem álcool (refrigerante, água e energético)',price:25,admissions:1},combo:{label:'Combo Amigo · Unissex',price:80,admissions:2}};
+  const ticketOptions = {mulher:{label:'Mulher',price:40,admissions:1},homem:{label:'Homem',price:1,admissions:1},jovem:{label:'+16 anos · Open bar sem álcool (refrigerante, água e energético)',price:25,admissions:1},combo:{label:'Combo Amigo · Unissex',price:80,admissions:2}};
 
   const state = {
     coupon: "",
