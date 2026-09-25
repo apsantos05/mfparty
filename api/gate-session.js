@@ -15,7 +15,7 @@ module.exports = async (req,res) => {
     if(!quota.allowed) return send(res,429,{error:'Muitas tentativas. Aguarde um minuto.'});
     if(!auth.samePassword(req.body?.password)) return send(res,401,{error:'Senha incorreta.'});
     const station=typeof req.body?.station==='string'?req.body.station.trim():'';
-    if(!station || station.length>40 || /[\x00-\x1f]/.test(station)) return send(res,422,{error:'Informe seu nome ou o nome desta portaria (até 40 caracteres).'});
+    if(!station || station.length>40 || /[\x00-\x1f]/.test(station)) return send(res,422,{error:'Informe o nome do porteiro (até 40 caracteres).'});
     res.setHeader('Set-Cookie',await auth.login(station));return send(res,200,{station});
   } catch {return send(res,503,{error:'Portaria indisponível. Tente novamente.'});}
 };

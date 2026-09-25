@@ -19,7 +19,7 @@
     $('resultTitle').textContent=titles[state]||titles.invalid;
     $('resultMessage').textContent=result.error||(state==='valid'?'Confira o documento e a categoria. Consultar o código ainda não registra a entrada.':'Este ingresso foi registrado e não poderá ser usado novamente.');
     $('ticketDetails').replaceChildren();if(result.ticket){detail('Comprador',result.ticket.buyer);detail('Categoria',result.ticket.category);detail('Entrada',`${result.ticket.index} de ${result.ticket.total}`);}
-    if(result.checkin){detail('Registrada em',new Date(result.checkin.at).toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'}));detail('Portaria',result.checkin.station);}
+    if(result.checkin){detail('Registrada em',new Date(result.checkin.at).toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'}));detail('Porteiro',result.checkin.station);}
     $('result').scrollIntoView({behavior:'smooth',block:'nearest'});$('resultTitle').focus({preventScroll:true});
   }
   async function check(code,action='preview'){
