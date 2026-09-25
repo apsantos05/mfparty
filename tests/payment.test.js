@@ -52,7 +52,7 @@ function res(){return {statusCode:0,headers:{},setHeader(k,v){this.headers[k]=v;
 const customer={name:'Teste Comprador',email:'comprador@example.com',cpf:'52998224725',phone:'12988859882'};
 async function call(handler,body){const response=res();await handler({method:'POST',body},response);return response;}
 let created;
-test('cálculos corretos da taxa por ingresso',()=>{assert.equal(amount('mulher',1),4449);assert.equal(amount('homem',1),549);assert.equal(amount('mulher',2),8898);assert.equal(amount('homem',2),1098);assert.equal(amount('mulher',0),null);assert.equal(amount('homem',6),null);});
+test('cálculos dos ingressos sem taxa de serviço',()=>{assert.equal(amount('mulher',1),4000);assert.equal(amount('homem',1),100);assert.equal(amount('mulher',2),8000);assert.equal(amount('homem',2),200);assert.equal(amount('mulher',0),null);assert.equal(amount('homem',6),null);});
 test('combo retirado rejeita novas cobranças e preserva confirmação de pedidos antigos',async()=>{
  const before=providerCalls;
  for(const quantity of [1,2]){
@@ -71,18 +71,18 @@ test('combo retirado rejeita novas cobranças e preserva confirmação de pedido
  assert.match(result.body.order.ticket,/Combo Amigo/);
 });
 
-test('ingresso +16 cobra 25 reais mais taxa e mantém identificação sem álcool',async()=>{
- assert.equal(amount('jovem',1),2949);
- assert.equal(amount('jovem',2),5898);
- assert.equal(amount('jovem',5),14745);
+test('ingresso +16 cobra 25 reais sem taxa e mantém identificação sem álcool',async()=>{
+ assert.equal(amount('jovem',1),2500);
+ assert.equal(amount('jovem',2),5000);
+ assert.equal(amount('jovem',5),12500);
  assert.equal(amount('jovem',0),null);
  assert.equal(amount('jovem',6),null);
  const data={ticket:'jovem',quantity:2,customer,request_id:'a1234567-1234-4234-8234-123456789099'};
  const a=await call(create,data),retry=await call(create,data);
  assert.equal(a.statusCode,200);
- assert.equal(a.body.amount_cents,5898);
+ assert.equal(a.body.amount_cents,5000);
  assert.equal(a.body.subtotal_cents,5000);
- assert.equal(a.body.service_fee_cents,898);
+ assert.equal(a.body.service_fee_cents,0);
  const order=verify(a.body.token);
  assert.equal(order.ticket,'jovem');
  assert.equal(order.ref,verify(retry.body.token).ref);
@@ -101,19 +101,19 @@ test('ingresso +16 cobra 25 reais mais taxa e mantém identificação sem álcoo
  assert.equal(providerCalls,before);
  assert.equal(paid.body.paid,true);
  assert.equal(paid.body.order.quantity,2);
- assert.equal(paid.body.order.amount_cents,5898);
+ assert.equal(paid.body.order.amount_cents,5000);
  assert.match(paid.body.order.ticket,/sem álcool.*refrigerante, água e energético/);
 });
 
 test('cupons descontam 25% apenas dos ingressos e rejeitam códigos inválidos',async()=>{
  for(const code of ['DOLCE25','MARIF25','BRUNOJ25','PROMO25']){
-  assert.equal(amount('mulher',1,code),3449);
-  assert.equal(amount('homem',1,code),524);
-  assert.equal(amount('jovem',1,code),2324);
-  assert.equal(amount('combo',1,code),6898);
-  assert.equal(amount('jovem',5,code),11620);
+  assert.equal(amount('mulher',1,code),3000);
+  assert.equal(amount('homem',1,code),75);
+  assert.equal(amount('jovem',1,code),1875);
+  assert.equal(amount('combo',1,code),6000);
+  assert.equal(amount('jovem',5,code),9375);
  }
- assert.equal(amount('mulher',1,' dolce25 '),3449);
+ assert.equal(amount('mulher',1,' dolce25 '),3000);
  assert.equal(amount('mulher',1,'INVALIDO'),null);
  const data={ticket:'mulher',quantity:2,customer,coupon:' dolce25 ',request_id:'a1234567-1234-4234-8234-123456789088'};
  const before=providerCalls;
@@ -123,10 +123,10 @@ test('cupons descontam 25% apenas dos ingressos e rejeitam códigos inválidos',
  assert.equal(providerCalls,before);
  const a=await call(create,data),retry=await call(create,{...data,coupon:'DOLCE25'});
  assert.equal(a.statusCode,200);
- assert.equal(a.body.amount_cents,6898);
+ assert.equal(a.body.amount_cents,6000);
  assert.equal(a.body.subtotal_cents,8000);
  assert.equal(a.body.discount_cents,2000);
- assert.equal(a.body.service_fee_cents,898);
+ assert.equal(a.body.service_fee_cents,0);
  assert.equal(a.body.coupon,'DOLCE25');
  const order=verify(a.body.token);
  assert.equal(order.coupon,'DOLCE25');
@@ -144,7 +144,7 @@ test('cupons descontam 25% apenas dos ingressos e rejeitam códigos inválidos',
  assert.equal(response.statusCode,200);
  const paid=await call(status,{token:a.body.token});
  assert.equal(paid.body.paid,true);
- assert.equal(paid.body.order.amount_cents,6898);
+ assert.equal(paid.body.order.amount_cents,6000);
  const reserved=await call(create,{ticket:'combo',quantity:1,customer,coupon:'PROMO25',request_id:'a1234567-1234-4234-8234-123456789087'});
  assert.equal(reserved.statusCode,422);
 });
@@ -162,7 +162,7 @@ test('gera PIX uma vez e conserva referência/idempotência nos retries',async()
  const previousCount=txMap.size;
  const data={ticket:'mulher',quantity:1,customer,request_id:'d1234567-1234-4234-8234-123456789012'};
  const a=await call(create,data),b=await call(create,data);
- assert.equal(a.statusCode,200);assert.equal(b.statusCode,200);assert.equal(a.body.amount_cents,4449);assert.equal(a.body.service_fee_cents,449);assert.equal(a.body.copy_paste,copyPaste);assert.equal(verify(a.body.token).ref,verify(b.body.token).ref);created=a.body;
+ assert.equal(a.statusCode,200);assert.equal(b.statusCode,200);assert.equal(a.body.amount_cents,4000);assert.equal(a.body.service_fee_cents,0);assert.equal(a.body.copy_paste,copyPaste);assert.equal(verify(a.body.token).ref,verify(b.body.token).ref);created=a.body;
  assert.equal(txMap.size,previousCount+1);
 });
 
@@ -170,7 +170,7 @@ test('resposta de criacao sem campos opcionais exibe PIX e preserva valor',async
  creationResponseOverride=tx=>({id:tx.id,amount_cents:tx.amount_cents,pix:tx.pix});
  try{
   const r=await call(create,{ticket:'mulher',quantity:1,customer,request_id:'a1234567-1234-4234-8234-123456789013'});
-  assert.equal(r.statusCode,200);assert.equal(r.body.copy_paste,copyPaste);assert.equal(r.body.amount_cents,4449);
+  assert.equal(r.statusCode,200);assert.equal(r.body.copy_paste,copyPaste);assert.equal(r.body.amount_cents,4000);
  }finally{creationResponseOverride=null;}
 });
 test('se resposta nao informar valor, consultar gateway antes de exibir PIX',async()=>{
@@ -178,7 +178,7 @@ test('se resposta nao informar valor, consultar gateway antes de exibir PIX',asy
  try{
   const before=providerCalls;
   const r=await call(create,{ticket:'homem',quantity:1,customer,request_id:'a1234567-1234-4234-8234-123456789014'});
-  assert.equal(r.statusCode,200);assert.equal(r.body.amount_cents,549);assert.equal(providerCalls,before+2);
+  assert.equal(r.statusCode,200);assert.equal(r.body.amount_cents,100);assert.equal(providerCalls,before+2);
  }finally{creationResponseOverride=null;}
 });
 test('valor incorreto informado pelo gateway bloqueia PIX',async()=>{
@@ -207,7 +207,7 @@ test('webhook PAID assinado libera compra e consulta não sobrecarrega provedor'
  const event={id:'evt_testpayment1',created:Math.floor(Date.now()/1000),type:'transaction.paid',data:tx};
  const raw=JSON.stringify(event);const ts=Math.floor(Date.now()/1000);const sig=crypto.createHmac('sha256',process.env.BRAVOPAY_WEBHOOK_SECRET).update(`${ts}.${raw}`).digest('hex');
  const r=res();const req=Object.assign(Readable.from([raw]),{method:'POST',headers:{'bravopay-signature':`t=${ts},v1=${sig}`}});await webhook(req,r);assert.equal(r.statusCode,200);
- const before=providerCalls;for(let i=0;i<150;i++){const response=await call(status,{token:created.token});assert.equal(response.statusCode,200);assert.equal(response.body.paid,true);assert.equal(response.body.order.amount_cents,4449);}
+ const before=providerCalls;for(let i=0;i<150;i++){const response=await call(status,{token:created.token});assert.equal(response.statusCode,200);assert.equal(response.body.paid,true);assert.equal(response.body.order.amount_cents,4000);}
  assert.equal(providerCalls,before);
 });
 test('reembolso assinado revoga a aprovação em cache',async()=>{
@@ -223,15 +223,15 @@ test('sem armazenamento compartilhado, status usa consulta menos frequente',asyn
  finally{process.env.UPSTASH_REDIS_REST_URL=url;}
 });
 test('limite compartilhado impede excesso de consultas externas',async()=>{
- for(let i=0;i<27;i++){const id='tx_nonexistent'+i;const ref='hp10_mulher_'+i.toString(16).padStart(32,'0');const token=sign({v:1,id,ref,ticket:'mulher',quantity:1,amount:4449,name:'Teste',expires:Date.now()+86400000});await call(status,{token});}
- const over=await call(status,{token:sign({v:1,id:'tx_nonexistent999',ref:'hp10_mulher_'+'f'.repeat(32),ticket:'mulher',quantity:1,amount:4449,name:'Teste',expires:Date.now()+86400000})});
+ for(let i=0;i<27;i++){const id='tx_nonexistent'+i;const ref='hp10_mulher_'+i.toString(16).padStart(32,'0');const token=sign({v:1,id,ref,ticket:'mulher',quantity:1,amount:4000,name:'Teste',expires:Date.now()+86400000});await call(status,{token});}
+ const over=await call(status,{token:sign({v:1,id:'tx_nonexistent999',ref:'hp10_mulher_'+'f'.repeat(32),ticket:'mulher',quantity:1,amount:4000,name:'Teste',expires:Date.now()+86400000})});
  assert.equal(over.statusCode,429);assert.ok(over.body.retry_after>0);
 });
 test('nenhuma chave ou código PIX real embutido no teste',()=>assert.equal(process.env.BRAVOPAY_API_KEY,'TEST_TOKEN_NEVER_REAL'));
 
- test('preço masculino novo gera PIX de R$ 5,49 e preserva tokens antigos assinados',async()=>{
+ test('preço masculino novo gera PIX de R$ 1,00 e preserva tokens antigos assinados',async()=>{
  const result=await call(create,{ticket:'homem',quantity:1,customer,request_id:'f1234567-1234-4234-8234-123456789014'});
- assert.equal(result.statusCode,200);assert.equal(result.body.amount_cents,549);assert.equal(result.body.subtotal_cents,100);
+ assert.equal(result.statusCode,200);assert.equal(result.body.amount_cents,100);assert.equal(result.body.subtotal_cents,100);
  const old={v:1,id:'tx_oldmale',ref:'hp10_homem_'+'e'.repeat(32),ticket:'homem',quantity:1,name:'Teste',expires:Date.now()+86400000};
  for(const [coupon,total] of [['',6449],['DOLCE25',4949],['DOLCE10',5849]])assert.ok(verify(sign({...old,coupon,amount:total})));
  assert.equal(verify(sign({...old,amount:1234})),null);

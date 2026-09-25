@@ -34,7 +34,7 @@
   const summaryTicket = $("#summaryTicket");
   const summaryQty = $("#summaryQty");
   const summarySubtotal = $("#summarySubtotal");
-  const summaryFee = $("#summaryFee");
+
   const summaryTotal = $("#summaryTotal");
   const generatePix = $("#generatePix");
   const payButtonText = $("#payButtonText");
@@ -88,7 +88,7 @@
   const validCoupons = ["DOLCE25", "MARIF25", "BRUNOJ25", "PROMO25"];
 
   function updateSummary() {
-    const feePerTicket = Number(config.serviceFeePerTicket || 4.49);
+    const feePerTicket = 0;
     const admissions = state.quantity * ticketOptions[state.ticket].admissions;
     const subtotal = Math.round(state.price * 100) * state.quantity;
     const serviceFee = Math.round(feePerTicket * 100) * admissions;
@@ -106,7 +106,7 @@
     summaryQty.textContent = state.ticket === "combo" ? `${state.quantity} combo(s) · ${admissions} ingressos` : String(admissions);
     $("#quantityLabel").textContent = state.ticket === "combo" ? "QUANTIDADE DE COMBOS" : "QUANTIDADE";
     summarySubtotal.textContent = brl(subtotal / 100);
-    summaryFee.textContent = `${brl(serviceFee / 100)} (${brl(feePerTicket)} por ingresso)`;
+
     summaryTotal.textContent = brl(total / 100);
 
     qtyMinus.disabled = state.quantity <= 1 || state.activePayment || state.processingPayment;
@@ -115,7 +115,7 @@
 
     generatePix.disabled = state.activePayment || state.processingPayment;
     payButtonText.textContent = state.activePayment ? "PIX GERADO · AGUARDE" : "GERAR PIX";
-    lotNote.textContent = `Pagamento exclusivamente via PIX · taxa de serviço ${brl(feePerTicket)} por ingresso. Abertura oficial do 1º lote em 21/09 às 00h.`;
+    lotNote.textContent = `Pagamento exclusivamente via PIX · sem taxa de serviço. Abertura oficial do 1º lote em 21/09 às 00h.`;
   }
 
   function validateForm() {
@@ -413,7 +413,7 @@
       state.discountRate = 25;
       $("#couponCode").value = code;
       $("#couponCode").removeAttribute("aria-invalid");
-      $("#couponStatus").textContent = `Cupom ${code} aplicado: 25% de desconto nos ingressos. Taxa de serviço sem desconto.`;
+      $("#couponStatus").textContent = `Cupom ${code} aplicado: 25% de desconto nos ingressos.`;
     }
     updateSummary();
   });

@@ -24,7 +24,7 @@ module.exports=async function handler(req,res){
  const ref=`hp10_${ticket}_${digest}`;
  const utm={};for(const key of ['source','medium','campaign','content','term','fbclid','ttclid','gclid'])utm[key]=text(b.utm?.[key],180);
  const discount=coupon?Math.round(TICKETS[ticket].cents*quantity*25/100):0;
- const payload={amount_cents:expected,method:'pix',customer:{name,email,cpf,phone},description:`Halloween da Mari Ferro - ${TICKETS[ticket].label} - ${quantity*TICKETS[ticket].admissions} ingresso(s) + taxa de serviço`,external_reference:ref,metadata:{event:'Halloween da Mari Ferro',ticket,coupon,discount_cents:String(discount),quantity:String(quantity),ticket_subtotal_cents:String(TICKETS[ticket].cents*quantity),service_fee_cents:String(FEE*quantity*TICKETS[ticket].admissions)},expires_in:1800,utm};
+ const payload={amount_cents:expected,method:'pix',customer:{name,email,cpf,phone},description:`Halloween da Mari Ferro - ${TICKETS[ticket].label} - ${quantity*TICKETS[ticket].admissions} ingresso(s)`,external_reference:ref,metadata:{event:'Halloween da Mari Ferro',ticket,coupon,discount_cents:String(discount),quantity:String(quantity),ticket_subtotal_cents:String(TICKETS[ticket].cents*quantity),service_fee_cents:String(FEE*quantity*TICKETS[ticket].admissions)},expires_in:1800,utm};
  const product=process.env[{mulher:'BRAVOPAY_PRODUCT_ID_MULHER',homem:'BRAVOPAY_PRODUCT_ID_HOMEM',combo:'BRAVOPAY_PRODUCT_ID_COMBO',jovem:'BRAVOPAY_PRODUCT_ID_JOVEM'}[ticket]];
  if(product)payload.product_id=product;
  try{
