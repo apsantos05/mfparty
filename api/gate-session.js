@@ -5,7 +5,9 @@ const auth = require('../lib/gate-auth');
 const tickets = require('../lib/tickets');
 module.exports = async (req,res) => {
   if(!['GET','POST'].includes(req.method)) { res.setHeader('Allow','GET, POST'); return send(res,405,{error:'Método não permitido.'}); }
-  if(!auth.ready() || !tickets.ready()) return send(res,503,{error:'Portaria ainda não configurada. A organização precisa ativar o serviço de ingressos.'});
+  const pending=tickets.configurationErrors();
+  if((process.env.GATE_PASSWORD||'').length<16)pending.push('GATE_PASSWORD (senha com 16 caracteres ou mais)');
+  if(pending.length)return send(res,503,{error:'Configuração pendente na Vercel: '+pending.join('; ')+'. Salve os valores em Production e faça Redeploy.'});
   try {
     if(req.method==='GET') { if(await redis.command(['PING'])!=='PONG')throw new Error('Storage unavailable'); const session=await auth.session(req); return send(res,session?200:401,session?{station:session.station}:{error:'Entre para acessar a portaria.'}); }
     if(!auth.requestAllowed(req)) return send(res,403,{error:'Solicitação não permitida.'});
