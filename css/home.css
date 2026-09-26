@@ -228,3 +228,38 @@ html{overflow-x:clip}
 
 .sound-bars{font-size:22px}
 
+
+/* Angular calls to action and the countdown in the opening scene. */
+.button,.nav-cta,.ticket-link{clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);border:0;border-radius:0}
+.button:focus-visible,.nav-cta:focus-visible,.ticket-link:focus-visible{outline:0;box-shadow:inset 0 0 0 4px currentColor}
+.nav-cta{background:var(--acid);color:var(--bg);font-weight:800;padding:14px 22px}
+.ticket-link{background:var(--bg);color:var(--text);padding:18px 20px;transition:background .2s,transform .2s}
+.ticket-link:hover{background:#292923;transform:translateY(-2px)}
+.hero-content{padding-top:130px}
+.hero-countdown{display:grid;grid-template-columns:auto auto;gap:10px 34px;align-items:center;width:fit-content;padding:18px 24px;background:#090909c9;border-left:3px solid var(--acid);backdrop-filter:blur(10px)}
+.countdown-date>span{display:block;font-size:8px;letter-spacing:.14em;color:var(--muted);font-weight:800}
+.countdown-date time{display:block;font:34px/1.2 var(--display);margin:6px 0;color:var(--text)}
+.countdown-date time b{color:var(--acid);font-weight:400}
+.countdown-date small{font-size:8px;letter-spacing:.08em}
+.hero-countdown .clock{gap:16px;width:auto}
+.hero-countdown .clock strong{font-size:44px;color:var(--acid);display:block;min-width:44px}
+.hero-countdown .clock span{font-size:8px;margin-top:4px}
+.hero-countdown #count-note{grid-column:1/-1;margin:0;font-size:8px;color:var(--muted);line-height:1.4}
+.hero .kicker{margin-top:25px}
+@media(max-width:700px){
+.hero-content{padding-top:103px}
+.hero-countdown{width:100%;padding:14px 16px;gap:12px;grid-template-columns:1fr}
+.countdown-date time{font-size:30px;margin:3px 0}
+.countdown-date>span{font-size:7px}
+.hero-countdown .clock{justify-content:flex-start;gap:22px}
+.hero-countdown .clock strong{font-size:36px;min-width:34px}
+.hero-countdown .clock span{font-size:7px}
+.hero-countdown #count-note{font-size:7px}
+.hero .kicker{margin:22px 0 17px;font-size:7px}
+.hero-copy{margin-top:22px}
+.hero .signature{margin-bottom:18px}
+.hero{height:940px}
+.nav-cta{padding:12px 14px}
+.mobile-cta-bar{background:transparent;padding:10px 5% max(10px,env(safe-area-inset-bottom))}
+.mobile-cta-bar a{padding:17px;background:var(--acid);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
+}
