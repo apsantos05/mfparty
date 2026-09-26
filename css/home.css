@@ -263,3 +263,6 @@ html{overflow-x:clip}
 .mobile-cta-bar{background:transparent;padding:10px 5% max(10px,env(safe-area-inset-bottom))}
 .mobile-cta-bar a{padding:17px;background:var(--acid);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
 }
+
+.hero-countdown{margin-top:24px}
+.hero .explore{display:inline-block;margin:18px 0 0}
